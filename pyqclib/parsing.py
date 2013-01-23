@@ -141,6 +141,12 @@ class QCResult(object):
     g09_thermal.returns_with_unit = True
     g09_thermal.unit_type = 'energy' # key in defs.UNITS
 
+    def g09_mulliken_chg(self, atom_index):
+        return parse_g09.get_mulliken_charge(self._logfile)[atom_index]
+    g09_mulliken_chg.returns_with_unit = False
+    g09_mulliken_chg.unit_type = 'unitless' # key in defs.UNITS
+
+
     qc_properties = [scfenergy, g09_thermal]
 
     @property

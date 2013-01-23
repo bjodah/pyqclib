@@ -27,6 +27,7 @@ UNITS = {'energy': {'kJ_per_mole': KJ_PER_MOLE,
                     'kCal_per_mole': KCAL_PER_MOLE,
                     'eV': EV,
                     'hartree': HARTREE},
+         'unitless': {'unitless': 1.0},
          }
 
 class LevelOfTheory(object):
