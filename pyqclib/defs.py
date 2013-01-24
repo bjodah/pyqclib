@@ -3,6 +3,16 @@
 
 import quantities as pq
 
+# Alias to be able to easily switch dependency upon quantities if neccessary
+UNITLESS = 1.0
+
+#Length
+ANGSTROM = pq.angstrom
+
+#Charge
+COULOMB = pq.coulomb
+ELEMENTARY_CHARGE = pq.elementary_charge
+
 # ENERGY UNITS
 KILOJOULE = pq.UnitQuantity('kilojoule',  pq.joule * 1e3,  symbol = 'kJ')
 KILOCALORIE = pq.UnitQuantity('kilocalorie',  pq.calorie * 1e3,  symbol = 'kCal')
@@ -27,7 +37,10 @@ UNITS = {'energy': {'kJ_per_mole': KJ_PER_MOLE,
                     'kCal_per_mole': KCAL_PER_MOLE,
                     'eV': EV,
                     'hartree': HARTREE},
-         'unitless': {'unitless': 1.0},
+         'unitless': {'unitless': UNITLESS},
+         'length': {'angstrom': ANGSTROM},
+         'charge': {'coulomb': COULOMB,
+                    'elementary_charge': ELEMENTARY_CHARGE}
          }
 
 class LevelOfTheory(object):

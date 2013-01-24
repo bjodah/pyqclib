@@ -7,7 +7,7 @@ import os
 
 import quantities as pq
 
-from pyqclib.defs import UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL
+from pyqclib.defs import UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL, ELEMENTARY_CHARGE
 
 # UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL = (pq.hartree * pq.constants.Avogadro_constant).rescale(KILOJOULE / pq.mol)
 
@@ -118,3 +118,26 @@ def get_gaussian_scs_eump2(path, ret_none_when_missing = True,
     return scs_eump2
 
 
+def get_mulliken_chg(path):
+    chg_blocks = []
+    recording = False
+    skip_n_lines = 0
+    for line in open(path, 'rt'):
+        if skip_n_lines > 0:
+            skip_n_lines -= 1
+            continue
+        if line.split()[:3] == ['Mulliken', 'atomic', 'charges:']:
+            recording = True
+            skip_n_lines = 1
+            block = []
+            continue
+        if line.split()[:3] == ['Sum', 'of', 'Mulliken']:
+            if line.split()[3:5] == ['atomic', 'charges'] or\
+                   line.split()[3] == 'charges=':
+                # Two level if enables parsing of both g09 and g03
+                recording = False
+                chg_blocks.append([float(atomrecord[2]) * ELEMENTARY_CHARGE for atomrecord in block])
+                continue
+        if recording:
+            block.append(line.split())
+    return chg_blocks[-1]

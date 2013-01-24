@@ -1,10 +1,13 @@
 import logging, os
 
+import numpy as np
 import quantities as pq
+import periodictable as pt
+
 import parse_g09
 from cclib.parser import ccopen
 
-from pyqclib.defs import UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL, UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL, UNITLESS_IN_ELECTRONVOLT_TO_TYPED_EV, KCAL_PER_MOLE
+from pyqclib.defs import UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL, UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL, UNITLESS_IN_ELECTRONVOLT_TO_TYPED_EV, KCAL_PER_MOLE, ANGSTROM, ELEMENTARY_CHARGE
 
 # Conversion factors
 CONVERSION_FROM_UNITLESS_EV_TO = {'kCal_per_mole': UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL,
@@ -47,7 +50,9 @@ class QCResult(object):
     """
 
     default_units = {'energy': KCAL_PER_MOLE,
-                     'entropy': KCAL_PER_MOLE / pq.kelvin}
+                     'entropy': KCAL_PER_MOLE / pq.kelvin,
+                     'length': ANGSTROM,
+                     'charge': ELEMENTARY_CHARGE}
 
     def __init__(self, logfile, name = None, calculationtype = None,
                  T_ref = 298.15 * pq.Kelvin, linear = False):
@@ -136,15 +141,35 @@ class QCResult(object):
         pass
         #return
 
+    def bond_length(self, first_index1, second_index1, geom_index0 = -1):
+        v = np.linalg.norm(self.cclib_data.atomcoords[geom_index0][first_index1 - 1] - \
+                              self.cclib_data.atomcoords[geom_index0][second_index1 - 1])
+        if v == 0.0:
+            return np.nan * ANGSTROM
+        else:
+            return v * ANGSTROM
+    bond_length.returns_with_unit = True
+    bond_length.unit_type = 'length' # key in defs.UNITS
+
+
+
+    def get_atom_indices1_of_element(self, elem):
+        if isinstance(elem, int):
+            return np.where(self.cclib_data.atomnos == elem)[0] + 1
+        else:
+            return np.where(self.cclib_data.atomnos == getattr(pt, elem).number)[0] + 1
+
     def g09_thermal(self):
         return parse_g09.get_gaussian_thermal(self._logfile).rescale(self.default_units['energy'])
     g09_thermal.returns_with_unit = True
     g09_thermal.unit_type = 'energy' # key in defs.UNITS
 
-    def g09_mulliken_chg(self, atom_index):
-        return parse_g09.get_mulliken_charge(self._logfile)[atom_index]
-    g09_mulliken_chg.returns_with_unit = False
-    g09_mulliken_chg.unit_type = 'unitless' # key in defs.UNITS
+    def g09_mulliken_chg(self, atom_index1 = -1):
+        if atom_index1 == -1: return np.nan * self.default_units['charge']
+        return parse_g09.get_mulliken_chg(self._logfile)[atom_index1 - 1].rescale(
+            self.default_units['charge'])
+    g09_mulliken_chg.returns_with_unit = True
+    g09_mulliken_chg.unit_type = 'charge' # key in defs.UNITS
 
 
     qc_properties = [scfenergy, g09_thermal]
