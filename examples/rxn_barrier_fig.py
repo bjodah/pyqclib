@@ -1,3 +1,4 @@
+import matplotlib.pyplot as plt
 from pyqclib.rxn_barrier_fig import BarriersSerie, BarrierPlotter
 
 def main(barriers, labels = [], outfile = None):
@@ -7,7 +8,10 @@ def main(barriers, labels = [], outfile = None):
         barriers, annotations = dict(enumerate(labels)))
     barrier_plotter = BarrierPlotter(ylabel = '$\mathrm{G~/~kcal\cdot mol^{-1}}$',
                                      outfile = outfile)
-    barrier_plotter(barrier_serie1)
+    barrier_plotter.plot(barrier_serie1)
+
+    #plt.savefig(self._outfile)
+    plt.show()
 
 
 if __name__ == '__main__':
