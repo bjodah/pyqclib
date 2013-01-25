@@ -4,3 +4,4 @@
 cmdlineqc/*.pyc
 cmdlineqc/#*#
 cmdlineqc/.#*
+examples/*.png
