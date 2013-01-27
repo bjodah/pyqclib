@@ -112,6 +112,8 @@ class BarrierPlotter(object):
     _fig = None
     _ax = None
 
+    ylim = None
+
     def __init__(self, barrier_series, xticks = None, xlabel = None, ylabel = None,
                  outfile = None, global_annotations = None):
         """
@@ -141,9 +143,9 @@ class BarrierPlotter(object):
             for element_args_kwargs in barrier_serie.get_element_args_kwargs():
                 elem_args, elem_kwargs = element_args_kwargs
                 self._ax.plot(*elem_args, **elem_kwargs)
+        self._post_plotting()
         self._annotate_barrier_series()
         self._global_annotate()
-        self._post_plotting()
 
     def add_legend(self):
         self._ax.legend(loc = 'upper center',  bbox_to_anchor = (0.5, 1.25),
@@ -199,6 +201,7 @@ class BarrierPlotter(object):
     def _post_plotting(self):
         plt.xticks(self._xticks)
         plt.xlim([0, 1])
+        if self.ylim != None: plt.ylim(self.ylim)
         if self._xlabel != None: plt.xlabel(self._xlabel)
         if self._ylabel != None: plt.ylabel(self._ylabel)
 
