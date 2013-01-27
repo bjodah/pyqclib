@@ -74,13 +74,37 @@ def get_gaussian_zpe(path, ret_none_when_missing = True):
         res *= UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL
     return res
 
-
+# Has a better name below
 def get_gaussian_thermal(path, ret_none_when_missing = True):
     token = ' Sum of electronic and thermal Free Energies='
     res = get_gaussian_after_lineleading_token(path, token, ret_none_when_missing)
     if res != None:
         res *= UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL
     return res
+
+# Same as fcn above but renamed
+def get_g09_thermal_free_energy(path, ret_none_when_missing = True):
+    token = ' Sum of electronic and thermal Free Energies='
+    res = get_gaussian_after_lineleading_token(path, token, ret_none_when_missing)
+    if res != None:
+        res *= UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL
+    return res
+
+
+def get_g09_w_zpve(path, ret_none_when_missing = True):
+    token = ' Sum of electronic and zero-point Energies='
+    res = get_gaussian_after_lineleading_token(path, token, ret_none_when_missing)
+    if res != None:
+        res *= UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL
+    return res
+
+def get_g09_thermal_enthalpy(path, ret_none_when_missing = True):
+    token = ' Sum of electronic and thermal Enthalpies='
+    res = get_gaussian_after_lineleading_token(path, token, ret_none_when_missing)
+    if res != None:
+        res *= UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL
+    return res
+
 
 
 def get_gaussian_eump2(path, ret_none_when_missing = True):

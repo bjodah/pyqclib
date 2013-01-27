@@ -109,6 +109,12 @@ class QCResult(object):
     E_vib.returns_with_unit = True
     E_vib.unit_type = 'energy'
 
+    # Convenience function, Zero - point vibrational energy
+    def ZPVE(self):
+        return self.E_vib(0 * pq.K)
+    ZPVE.returns_with_unit = E_vib.returns_with_unit
+    ZPVE.unit_type = E_vib.unit_type
+
     def q_vib(self, T):
         vt = self.real_vibtemps()
         if vt == None: return None
@@ -163,6 +169,17 @@ class QCResult(object):
         return parse_g09.get_gaussian_thermal(self._logfile).rescale(self.default_units['energy'])
     g09_thermal.returns_with_unit = True
     g09_thermal.unit_type = 'energy' # key in defs.UNITS
+
+    def g09_w_zpve(self):
+        return parse_g09.get_g09_w_zpve(self._logfile).rescale(self.default_units['energy'])
+    g09_w_zpve.returns_with_unit = True
+    g09_w_zpve.unit_type = 'energy' # key in defs.UNITS
+
+    def g09_thermal_enthalpy(self):
+        return parse_g09.get_g09_thermal_enthalpy(self._logfile).rescale(self.default_units['energy'])
+    g09_thermal_enthalpy.returns_with_unit = True
+    g09_thermal_enthalpy.unit_type = 'energy' # key in defs.UNITS
+
 
     def g09_mulliken_chg(self, atom_index1 = -1):
         if atom_index1 == -1: return np.nan * self.default_units['charge']

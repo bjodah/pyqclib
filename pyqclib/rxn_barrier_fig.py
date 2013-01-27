@@ -114,6 +114,9 @@ class BarrierPlotter(object):
 
     ylim = None
 
+    horizontalalignment = 'center'
+    verticalalignment = 'center'
+
     def __init__(self, barrier_series, xticks = None, xlabel = None, ylabel = None,
                  outfile = None, global_annotations = None):
         """
@@ -164,13 +167,13 @@ class BarrierPlotter(object):
         self._ax = self._fig.add_axes([self.ax_l, self.ax_b, self.ax_w, self.ax_h])
 
 
-    def _assign_to_free_space(self, xy, fontsize):
+    def _assign_to_free_space(self, xy, fontsize, txt):
         x, y = xy
         bbox = self._ax.get_window_extent()
         bounds = bbox.bounds
         yspan = bounds[3] - bounds[1]
         fontsize_in_frac = fontsize / yspan
-        return x, y - fontsize_in_frac / 1.7 # <--- This needs to be IMPROVED!!
+        return x, y - (txt.count('\n') + 1) * fontsize_in_frac / 1.7 # <--- This needs to be IMPROVED!!
 
     def _get_norm_y_of_barriers_serie(self, barriers_serie, barrier_idx):
         ymin, ymax = self._ax.get_ylim()
@@ -183,9 +186,10 @@ class BarrierPlotter(object):
             for bi, anno_txt in bs._annotations.iteritems():
                 norm_y = self._get_norm_y_of_barriers_serie(bs, bi)
                 xy = (barriers_serie.x_center_barrier_bar(bi), norm_y)
-                xytext = self._assign_to_free_space(xy, rcParams['font.size'])
+                xytext = self._assign_to_free_space(xy, rcParams['font.size'], anno_txt)
                 self._ax.annotate(anno_txt, xy, xycoords = 'axes fraction', xytext = xytext,
-                                  horizontalalignment = 'center', verticalalignment = 'center')
+                                  horizontalalignment = self.horizontalalignment,
+                                  verticalalignment = self.verticalalignment)
 
 
     def _global_annotate(self):
@@ -193,7 +197,7 @@ class BarrierPlotter(object):
             xy = (self._barrier_series[0].x_center_barrier_bar(i),
                   min([self._get_norm_y_of_barriers_serie(barrier_serie, i) for\
                        barrier_serie in self._barrier_series]))
-            xytext = self._assign_to_free_space(xy, rcParams['font.size'])
+            xytext = self._assign_to_free_space(xy, rcParams['font.size'], anno_txt)
             self._ax.annotate(anno_txt, xy, xycoords = 'axes fraction', xytext = xytext,
                          horizontalalignment = 'center', verticalalignment = 'center')
 
