@@ -13,9 +13,14 @@ ANGSTROM = pq.angstrom
 COULOMB = pq.coulomb
 ELEMENTARY_CHARGE = pq.elementary_charge
 
+# ANGLE
+DEGREE = pq.degree
+RADIAN = pq.radian
+
 # ENERGY UNITS
 KILOJOULE = pq.UnitQuantity('kilojoule',  pq.joule * 1e3,  symbol = 'kJ')
 KILOCALORIE = pq.UnitQuantity('kilocalorie',  pq.calorie * 1e3,  symbol = 'kCal')
+
 
 UNITLESS_IN_ELECTRONVOLT_TO_TYPED_EV = pq.eV
 UNITLESS_IN_HARTREE_TO_TYPED_HARTREE = pq.hartree
@@ -40,7 +45,9 @@ UNITS = {'energy': {'kJ_per_mole': KJ_PER_MOLE,
          'unitless': {'unitless': UNITLESS},
          'length': {'angstrom': ANGSTROM},
          'charge': {'coulomb': COULOMB,
-                    'elementary_charge': ELEMENTARY_CHARGE}
+                    'elementary_charge': ELEMENTARY_CHARGE},
+         'angle': {'degree': DEGREE,
+                    'radian': RADIAN}
          }
 
 class LevelOfTheory(object):

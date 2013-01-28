@@ -7,7 +7,7 @@ import periodictable as pt
 import parse_g09
 from cclib.parser import ccopen
 
-from pyqclib.defs import UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL, UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL, UNITLESS_IN_ELECTRONVOLT_TO_TYPED_EV, KCAL_PER_MOLE, ANGSTROM, ELEMENTARY_CHARGE
+from pyqclib.defs import UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL, UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL, UNITLESS_IN_ELECTRONVOLT_TO_TYPED_EV, KCAL_PER_MOLE, ANGSTROM, ELEMENTARY_CHARGE, UNITLESS, DEGREE
 
 # Conversion factors
 CONVERSION_FROM_UNITLESS_EV_TO = {'kCal_per_mole': UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL,
@@ -52,7 +52,8 @@ class QCResult(object):
     default_units = {'energy': KCAL_PER_MOLE,
                      'entropy': KCAL_PER_MOLE / pq.kelvin,
                      'length': ANGSTROM,
-                     'charge': ELEMENTARY_CHARGE}
+                     'charge': ELEMENTARY_CHARGE,
+                     'angle': DEGREE}
 
     def __init__(self, logfile, name = None, calculationtype = None,
                  T_ref = 298.15 * pq.Kelvin, linear = False):
@@ -157,6 +158,26 @@ class QCResult(object):
     bond_length.returns_with_unit = True
     bond_length.unit_type = 'length' # key in defs.UNITS
 
+    def bond_angle(self, first_index1, second_index1, third_index1, geom_index0 = -1):
+        a, b, c = (self.cclib_data.atomcoords[geom_index0][first_index1 - 1],
+                   self.cclib_data.atomcoords[geom_index0][second_index1 - 1],
+                   self.cclib_data.atomcoords[geom_index0][third_index1 - 1])
+        v1 = a - b
+        v2 = c - b
+
+        v1 /= np.linalg.norm(v1)
+        v2 /= np.linalg.norm(v2)
+
+        angle = np.arccos(np.dot(v1, v2))
+        if np.isnan(angle):
+            if np.all(v1 == v2):
+                angle = 0
+            else:
+                angle = np.pi
+        return angle * 180 / np.pi * DEGREE
+    bond_angle.returns_with_unit = True
+    bond_angle.unit_type = 'angle' # key in defs.UNITS
+
 
 
     def get_atom_indices1_of_element(self, elem):
@@ -188,8 +209,14 @@ class QCResult(object):
     g09_mulliken_chg.returns_with_unit = True
     g09_mulliken_chg.unit_type = 'charge' # key in defs.UNITS
 
+    def g09_mulliken_spin(self, atom_index1 = -1):
+        if atom_index1 == -1: return np.nan * UNITLESS
+        return parse_g09.get_mulliken_spin(self._logfile)[atom_index1 - 1]
+    g09_mulliken_spin.returns_with_unit = False
+    g09_mulliken_spin.unit_type = UNITLESS # key in defs.UNITS
 
-    qc_properties = [scfenergy, g09_thermal]
+
+    qc_properties = [scfenergy, g09_thermal, g09_mulliken_chg, g09_mulliken_spin]
 
     @property
     def cclib_data(self):

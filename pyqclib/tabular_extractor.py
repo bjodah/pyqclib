@@ -18,6 +18,9 @@ class TabularExtractor(object):
     and the data is conveniently put in 2D array structure
     """
 
+    out_fmt = '%.18e'
+    out_delimiter = ' '
+
     def __init__(self, row_vars, col_vars, output, unit):
         """
 
@@ -37,12 +40,15 @@ class TabularExtractor(object):
             prop_getter = self.mk_prop_getter(r, c)
             prop_getter_args = self.mk_prop_getter_args(r, c)
             val = prop_getter(*prop_getter_args)
-            self._data[ri, ci] = float(val.rescale(self._unit))
+            if prop_getter.returns_with_unit:
+                self._data[ri, ci] = float(val.rescale(self._unit))
+            else:
+                self._data[ri, ci] = val
 
 
     def extract(self):
         self._populate()
-        np.savetxt(self._output, self._data)
+        np.savetxt(self._output, self._data, fmt = self.out_fmt, delimiter = self.out_delimiter)
 
     def mk_prop_getter(self, row_var, col_var):
         pass

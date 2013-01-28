@@ -7,7 +7,7 @@ import os
 
 import quantities as pq
 
-from pyqclib.defs import UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL, ELEMENTARY_CHARGE
+from pyqclib.defs import UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL, ELEMENTARY_CHARGE, UNITLESS
 
 # UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL = (pq.hartree * pq.constants.Avogadro_constant).rescale(KILOJOULE / pq.mol)
 
@@ -165,3 +165,28 @@ def get_mulliken_chg(path):
         if recording:
             block.append(line.split())
     return chg_blocks[-1]
+
+def get_mulliken_spin(path):
+    spin_blocks = []
+    recording = False
+    skip_n_lines = 0
+    for line in open(path, 'rt'):
+        if skip_n_lines > 0:
+            skip_n_lines -= 1
+            continue
+        if line.split()[:4] == ['Mulliken', 'atomic', 'spin', 'densities:']:
+            recording = True
+            skip_n_lines = 1
+            block = []
+            continue
+        if line.split()[:3] == ['Sum', 'of', 'Mulliken']:
+            if line.split()[3:6] == ['atomic', 'spin', 'densities'] or\
+                   line.split()[3:5] == ['spin', 'densities=']:
+                # Two level if enables parsing of both g09 and g03
+                recording = False
+                spin_blocks.append([float(atomrecord[2]) * UNITLESS for atomrecord in block])
+                continue
+        if recording:
+            block.append(line.split())
+    return spin_blocks[-1]
+
