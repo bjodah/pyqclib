@@ -53,7 +53,8 @@ class QCResult(object):
                      'entropy': KCAL_PER_MOLE / pq.kelvin,
                      'length': ANGSTROM,
                      'charge': ELEMENTARY_CHARGE,
-                     'angle': DEGREE}
+                     'angle': DEGREE,
+                     UNITLESS: UNITLESS}
 
     def __init__(self, logfile, name = None, calculationtype = None,
                  T_ref = 298.15 * pq.Kelvin, linear = False):
@@ -240,4 +241,3 @@ class QCResult(object):
 #     @property
 #     def _logfile(self):
 #         return self._collect_dir
-

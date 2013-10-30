@@ -47,7 +47,8 @@ UNITS = {'energy': {'kJ_per_mole': KJ_PER_MOLE,
          'charge': {'coulomb': COULOMB,
                     'elementary_charge': ELEMENTARY_CHARGE},
          'angle': {'degree': DEGREE,
-                    'radian': RADIAN}
+                    'radian': RADIAN},
+         1.0: {1.0: UNITLESS}
          }
 
 class LevelOfTheory(object):
