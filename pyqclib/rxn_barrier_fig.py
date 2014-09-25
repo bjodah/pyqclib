@@ -65,6 +65,8 @@ class BarriersSerie(object):
     def _get_barrier_lines(self):
         element_args_kwargs = []
         for i, yval in enumerate(self._barriers):
+            if yval is None:
+                continue
             xval = self.x[i * 2 + 1], self.x[i * 2 + 2]
             barrier_kwargs = {'color': self._color, 'linewidth': self._barrier_lw}
             if i == 0:
@@ -78,7 +80,11 @@ class BarriersSerie(object):
     def _get_interconnecting_lines(self):
         element_args_kwargs = []
         for i, yval in enumerate(self._barriers):
+            if yval is None:
+                continue
             if i < len(self._barriers) - 1:
+                if self._barriers[i + 1] is None:
+                    continue
                 interp_xlim = self.x[i * 2 + 2], self.x[i * 2 + 3]
                 interp_ylim = self._barriers[i], self._barriers[i + 1]
                 interp_deltax = interp_xlim[1] - interp_xlim[0]
@@ -208,4 +214,3 @@ class BarrierPlotter(object):
         if self.ylim != None: plt.ylim(self.ylim)
         if self._xlabel != None: plt.xlabel(self._xlabel)
         if self._ylabel != None: plt.ylabel(self._ylabel)
-
