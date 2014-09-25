@@ -28,9 +28,9 @@ UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL = \
     (pq.hartree * pq.constants.Avogadro_constant).rescale(KILOJOULE / pq.mol)
 UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL = \
     (pq.eV * pq.constants.Avogadro_constant).rescale(KILOJOULE / pq.mol)
-UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL = \
+UNITLESS_IN_HARTREE_TO_TYPED_KILOCALORIE_PER_MOL = \
     (pq.hartree * pq.constants.Avogadro_constant).rescale(KILOCALORIE / pq.mol)
-UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL = \
+UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOCALORIE_PER_MOL = \
     (pq.eV * pq.constants.Avogadro_constant).rescale(KILOCALORIE / pq.mol)
 
 KJ_PER_MOLE   = KILOJOULE / pq.mol
