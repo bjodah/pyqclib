@@ -1,4 +1,5 @@
-import logging, os
+import logging
+import os
 
 import numpy as np
 import quantities as pq
@@ -7,12 +8,21 @@ import periodictable as pt
 import parse_g09
 from cclib.parser import ccopen
 
-from pyqclib.defs import UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL, UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOCALORIE_PER_MOL, UNITLESS_IN_ELECTRONVOLT_TO_TYPED_EV, KCAL_PER_MOLE, ANGSTROM, ELEMENTARY_CHARGE, UNITLESS, DEGREE
+from pyqclib.defs import (
+    UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL,
+    UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOCALORIE_PER_MOL,
+    UNITLESS_IN_ELECTRONVOLT_TO_TYPED_EV,
+    UNITLESS_IN_ELECTRONVOLT_TO_TYPED_HARTREE,
+    KCAL_PER_MOLE, ANGSTROM, ELEMENTARY_CHARGE, UNITLESS, DEGREE
+)
 
 # Conversion factors
-CONVERSION_FROM_UNITLESS_EV_TO = {'kCal_per_mole': UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOCALORIE_PER_MOL,
-                                  'kJ_per_mole': UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL,
-                                  'eV': UNITLESS_IN_ELECTRONVOLT_TO_TYPED_EV}
+CONVERSION_FROM_UNITLESS_EV_TO = {
+    'kCal_per_mole': UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOCALORIE_PER_MOL,
+    'kJ_per_mole': UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL,
+    'eV': UNITLESS_IN_ELECTRONVOLT_TO_TYPED_EV,
+    'Eh': UNITLESS_IN_ELECTRONVOLT_TO_TYPED_HARTREE,
+}
 
 
 def _get_parsed_cclib_data(logfile, logging_level = logging.ERROR):
@@ -73,10 +83,8 @@ class QCResult(object):
         return (self.cclib_data.scfenergies[index] * pq.eV * \
                 pq.constants.Avogadro_constant).rescale(
             self.default_units['energy'])
-
     scfenergy.returns_with_unit = True
     scfenergy.unit_type = 'energy' # key in defs.UNITS
-
 
     def vibtemps(self):
         try:
@@ -84,8 +92,8 @@ class QCResult(object):
             rl = rl[:(self.data.natom * 3 - {True: 5, False: 6}[self._linear])]
         except AttributeError:
             return None
-        return (pq.speed_of_light*rl*pq.constants.Planck_constant/pq.constants.Boltzmann_constant).rescale(pq.Kelvin)
-
+        return (pq.speed_of_light*rl*pq.constants.Planck_constant/
+                pq.constants.Boltzmann_constant).rescale(pq.Kelvin)
 
     def real_vibtemps(self):
         vt = self.vibtemps
@@ -101,12 +109,10 @@ class QCResult(object):
         if vt == None: return None
         NA = pq.constants.Avogadro_constant
         kB = pq.constants.Boltzmann_constant
-
         if T < 1e-3 * pq.K:
             Evib = NA * kB * np.sum(vt / 2)
         else:
-            Evib = NA * kB * np.sum(vt / 2 + vt * np.exp( - vt / T) /(1 - np.exp( - vt / T)))
-
+            Evib = NA * kB * np.sum(vt/2 + vt*np.exp(-vt/T)/(1 - np.exp(-vt/T)))
         return Evib.rescale(self.default_units['energy'])
     E_vib.returns_with_unit = True
     E_vib.unit_type = 'energy'

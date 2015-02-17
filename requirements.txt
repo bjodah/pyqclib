@@ -6,3 +6,5 @@ scipy>=0.14.0
 matplotlib>=1.4.0
 periodictable>=1.4.1
 future>=0.13.0
+cclib>=1.2
+Pmw

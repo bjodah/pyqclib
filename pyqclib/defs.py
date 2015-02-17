@@ -26,12 +26,13 @@ UNITLESS_IN_ELECTRONVOLT_TO_TYPED_EV = pq.eV
 UNITLESS_IN_HARTREE_TO_TYPED_HARTREE = pq.hartree
 UNITLESS_IN_HARTREE_TO_TYPED_KILOJOULE_PER_MOL = \
     (pq.hartree * pq.constants.Avogadro_constant).rescale(KILOJOULE / pq.mol)
-UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL = \
-    (pq.eV * pq.constants.Avogadro_constant).rescale(KILOJOULE / pq.mol)
 UNITLESS_IN_HARTREE_TO_TYPED_KILOCALORIE_PER_MOL = \
     (pq.hartree * pq.constants.Avogadro_constant).rescale(KILOCALORIE / pq.mol)
+UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOJOULE_PER_MOL = \
+    (pq.eV * pq.constants.Avogadro_constant).rescale(KILOJOULE / pq.mol)
 UNITLESS_IN_ELECTRONVOLT_TO_TYPED_KILOCALORIE_PER_MOL = \
     (pq.eV * pq.constants.Avogadro_constant).rescale(KILOCALORIE / pq.mol)
+UNITLESS_IN_ELECTRONVOLT_TO_TYPED_HARTREE = pq.eV.rescale(pq.hartree)
 
 KJ_PER_MOLE   = KILOJOULE / pq.mol
 KCAL_PER_MOLE = KILOCALORIE / pq.mol
@@ -41,7 +42,7 @@ HARTREE = pq.hartree
 UNITS = {'energy': {'kJ_per_mole': KJ_PER_MOLE,
                     'kCal_per_mole': KCAL_PER_MOLE,
                     'eV': EV,
-                    'hartree': HARTREE},
+                    'Eh': HARTREE},
          'unitless': {'unitless': UNITLESS},
          'length': {'angstrom': ANGSTROM},
          'charge': {'coulomb': COULOMB,
